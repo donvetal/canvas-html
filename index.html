@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body style="margin: 0;">
+
+<canvas id="canvas" style="display: block">Your browser is not supported. U mad bro.</canvas>
+
+<script>
+  let
+    canv = document.getElementById('canvas'), //  в JS подгружаем сам canvas
+    ctx = canv.getContext('2d'); // context загруженного canvas
+  canv.width = window.innerWidth;
+  canv.height = window.innerHeight;
+
+  //Code
+  const x = 50;
+  ctx.fillStyle = 'magenta'; // цвет квадрата, можно указывать в # hex
+  ctx.fillRect(x, 50, 300, 200); // рисуем сам квадрат
+
+  ctx.strokeStyle = 'red'
+  ctx.lineWidth = 10
+  ctx.strokeRect(x, 300, 300, 200) // рисуем квадрат но не заполняем его
+
+  ctx.fillStyle = 'orange'
+  ctx.arc(canv.width / 2, canv.height / 2, 100, 0, Math.PI * 2, false) // рисум круг
+  ctx.fill()
+
+  ctx.scale(0.9, 0.9) //  можно увеличить или уменьшить на сколько захотим, по осям X и Y
+  ctx.rotate(.15) // поварачивает фигуру,  '-' (знау минус)  повернет в противоположную сторону
+  ctx.lineWidth = 16
+  ctx.strokeStyle = 'yellow'
+  ctx.beginPath() // данным методом можно нарисовать все
+  ctx.moveTo(canv.width - 200, 50) // указывает начальную позицию точки
+  ctx.lineTo(canv.width - 25, 400) // проложить линию куда нибудь
+  ctx.lineTo(canv.width - 400, 400)
+  ctx.closePath() // соединяет последние вде точки
+  ctx.stroke() // для того чтобы отрисовать
+
+  //Для создания градиента
+  let grad = ctx.createLinearGradient(canv.width / 2, 0, canv.width / 2 + 200, 0)
+  grad.addColorStop( 0, 'magenta')
+  grad.addColorStop(.50, 'blue')
+  grad.addColorStop(1, 'red')
+
+  ctx.rotate(-.15)
+  ctx.fillStyle = grad
+  ctx.font = '20px Georgia' // указываем шрифт которым будет написан текст
+  ctx.fillText('Hello world!', canv.width / 2, 150) //  указываем какой будет текст и координаты
+</script>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        body {
+            background-image: url("movie-picture.jpeg");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body style="margin: 0;">
+<canvas id="canvas" style="display: block;">Your browser is not supported. U mad bro.</canvas>
+
+<script>
+  let
+    canv = document.getElementById('canvas'),
+    ctx = canv.getContext('2d'),
+    isMouseDown = false,
+    radius = 10,
+    coords = [];
+
+  canv.width = window.innerWidth;
+  canv.height = window.innerHeight;
+
+  //Code
+  //Делаем рисовалку типа paint
+
+  canv.addEventListener('mousedown', () => {
+    isMouseDown = true;
+  });
+  canv.addEventListener('mouseup', () => {
+    isMouseDown = false;
+    ctx.beginPath();
+    coords.push('mouseup')
+  });
+
+  ctx.lineWidth = radius * 2;
+  canv.addEventListener('mousemove', function (e) {
+    if (isMouseDown) {
+      // в начале дорисовует линию к текущей позиции с последней
+      coords.push([e.clientX, e.clientY]); // пушим текущее положение мыши
+      ctx.lineTo(e.clientX, e.clientY);
+      ctx.stroke();
+
+      //затем рисует круг
+      ctx.beginPath(); // для того чтобы при клике за кругом не следовало заролнение
+      ctx.arc(e.clientX, e.clientY, radius, 0, Math.PI * 2); // рисуем круг
+      ctx.fill();
+
+      //затем он начинает новый путь и меняет позицию курсора
+      ctx.beginPath();
+      ctx.moveTo(e.clientX, e.clientY);
+
+    }
+
+  });
+
+  function save() {
+    localStorage.setItem('coords', JSON.stringify(coords));
+  }
+
+  function clear() {
+    ctx.fillSyle = 'white';
+    ctx.clearRect(0, 0, canv.width, canv.height);
+
+    ctx.beginPath();
+    ctx.fillStyle = 'black';
+  }
+
+  function replay() {
+    let timer = setInterval(() => {
+      if (!coords.length) {
+        clearInterval(timer);
+        ctx.beginPath();
+        return;
+      }
+      let crd = coords.shift(),
+        e = {
+          clientX: crd[0],
+          clientY: crd[1]
+        };
+      ctx.lineTo(e.clientX, e.clientY);
+      ctx.stroke();
+
+      //затем рисует круг
+      ctx.beginPath(); // для того чтобы при клике за кругом не следовало заролнение
+      ctx.arc(e.clientX, e.clientY, radius, 0, Math.PI * 2); // рисуем круг
+      ctx.fill();
+
+      //затем он начинает новый путь и меняет позицию курсора
+      ctx.beginPath();
+      ctx.moveTo(e.clientX, e.clientY);
+
+    }, 30);
+
+  }
+
+  document.addEventListener('keydown', (e) => {
+    // console.log(e.key);
+    if (e.key === 's') {
+      //save
+      save();
+      console.log('Saved');
+    }
+    if (e.key === 'r') {
+      //replay
+      coords = JSON.parse(localStorage.getItem('coords'));
+      console.log('Replaying...');
+      console.log('coords', coords);
+      clear();
+      replay();
+
+    }
+    if (e.key === 'c') {
+      //clear
+      clear();
+      console.log('Cleared');
+    }
+  });
+
+</script>
+
+</body>
+</html>
